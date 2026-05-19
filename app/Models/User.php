@@ -7,11 +7,13 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+   
+/** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -45,5 +47,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function sentences()
+    {
+        return $this->hasMany(\App\Models\Sentence::class);    
+        return $this->hasMany(Sentence::class, 'contributor_id');
+    }
+
+    public function validations()
+    {
+        return $this->hasMany(Validation::class, 'validator_id');
+    }
+    
+    public function dictionaries()
+    {
+        return $this->hasMany(\App\Models\Dictionary::class);
     }
 }
