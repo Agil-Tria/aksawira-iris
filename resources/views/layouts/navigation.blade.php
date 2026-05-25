@@ -39,14 +39,14 @@
 
                 {{-- DESKTOP MENU --}}
                 <div class="hidden xl:flex items-center gap-2">
-
+                    @auth
                     <a href="/dashboard"
                         class="px-4 py-3 rounded-2xl hover:bg-gray-100 transition">
 
                         Dashboard
 
                     </a>
-
+                    @endauth
                     <a href="/translate"
                         class="px-4 py-3 rounded-2xl hover:bg-gray-100 transition">
 
@@ -218,14 +218,14 @@
         class="xl:hidden border-t border-gray-200 bg-white">
 
         <div class="px-6 py-6 space-y-3">
-
+            @auth
             <a href="/dashboard"
                 class="block px-5 py-4 rounded-2xl hover:bg-gray-100">
 
                 Dashboard
 
             </a>
-
+            @endauth
             <a href="/translate"
                 class="block px-5 py-4 rounded-2xl hover:bg-gray-100">
 
@@ -246,7 +246,9 @@
                 Corpus
 
             </a>
+            
 
+             
             @auth
 
             <a href="/translation-history"

@@ -265,6 +265,11 @@
                         Dictionary Validation
 
                     </a>
+                    <a
+                        href="/sentences"
+                        class="block bg-indigo-50 hover:bg-yellow-100 transition rounded-2xl p-5">
+                      Sentences Management
+                    </a>
 
                     @endrole
 
@@ -286,8 +291,13 @@
 
                     </a>
 
-                    @endrole
+                    <a
+                        href="/sentences"
+                        class="block bg-yellow-50 hover:bg-yellow-100 transition rounded-2xl p-5">
+                      Sentences Management
+                    </a>
 
+                    @endrole
                 </div>
 
             </div>

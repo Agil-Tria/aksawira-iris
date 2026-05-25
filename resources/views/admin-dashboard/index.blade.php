@@ -260,7 +260,59 @@
 
         {{-- MANAGEMENT ACTIONS --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        @role('admin|validator')
 
+<a
+    href="/sentences"
+    class="bg-white rounded-3xl shadow p-8 hover:shadow-xl transition">
+
+    <h2 class="text-2xl font-bold mb-4">
+
+        Sentences Management
+
+    </h2>
+
+    <p class="text-gray-600 mb-6">
+
+        Moderasi dan manajemen
+        dataset corpus internal.
+
+    </p>
+
+    <div class="text-indigo-600 font-semibold">
+
+        Open Sentences →
+
+    </div>
+
+</a>
+
+@endrole
+
+            <a
+                href="/admin/users"
+                class="bg-white rounded-3xl shadow p-8 hover:shadow-xl transition">
+
+                <h2 class="text-2xl font-bold mb-4">
+
+                    User Approval
+
+                </h2>
+
+                <p class="text-gray-600 mb-6">
+
+                    Kelola persetujuan akun user
+                    dan aktivasi akses platform.
+
+                </p>
+
+                <div class="text-indigo-600 font-semibold">
+
+                    Open User Management →
+
+                </div>
+
+            </a>
             {{-- EXPORT --}}
             <a
                 href="/export/corpus/csv"

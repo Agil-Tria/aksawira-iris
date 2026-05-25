@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Dictionary extends Model
 {
      protected $fillable = [
+        'user_id',
         'word_source',
         'word_target',
         'example_sentence',

@@ -2,246 +2,378 @@
 
 <div class="min-h-screen bg-gray-100 py-14">
 
-    <div class="max-w-7xl mx-auto px-6">
+<div class="max-w-6xl mx-auto px-4 py-10">
 
-        {{-- HEADER --}}
-        <div class="text-center mb-12">
+    {{-- HEADER --}}
+    <div class="text-center mb-10">
 
-            <h1 class="text-6xl font-bold text-gray-900 mb-4">
-                Komering Translator
-            </h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">
 
-            <p class="text-xl text-gray-600">
-                Terjemahkan Bahasa Indonesia ↔ Komering
-            </p>
+            Komering Translator
+
+        </h1>
+
+        <p class="text-gray-500">
+
+            Indonesia ↔ Komering Translation
+
+        </p>
+
+    </div>
+
+    {{-- TRANSLATOR --}}
+    <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden">
+
+        {{-- TOP BAR --}}
+        <div class="grid grid-cols-[1fr_auto_1fr] border-b border-gray-200">
+
+            {{-- LEFT --}}
+            <div class="px-6 py-4 flex items-center">
+
+                <span class="font-semibold text-gray-700">
+
+                    Input
+
+                </span>
+
+            </div>
+
+            {{-- SWAP --}}
+            <div class="flex items-center justify-center border-x border-gray-200">
+
+                <!-- <button
+                    id="swap_language"
+                    type="button"
+                    class="w-10 h-10 rounded-full hover:bg-gray-100 transition flex items-center justify-center text-gray-600 text-lg">
+
+                    ⇄
+
+                </button> -->
+
+            </div>
+
+            {{-- RIGHT --}}
+            <div class="px-6 py-4 flex items-center justify-between">
+
+                <span class="font-semibold text-gray-700">
+
+                    Result
+
+                </span>
+
+                <select
+                    id="translation_direction"
+                    class="text-sm border-none focus:ring-0 text-gray-500 bg-transparent">
+
+                    <option value="id_to_kom">
+
+                        ID → KOM
+
+                    </option>
+
+                    <option value="kom_to_id">
+
+                        KOM → ID
+
+                    </option>
+
+                </select>
+
+            </div>
 
         </div>
 
-        {{-- TRANSLATOR CARD --}}
-        <form
-            method="POST"
-            action="{{ route('translate.process') }}">
+        {{-- BODY --}}
+        <div class="grid lg:grid-cols-2">
 
-            @csrf
+            {{-- INPUT --}}
+            <div class="border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col">
 
-            <div class="bg-white rounded-3xl shadow-xl p-10">
-
-                {{-- TOP LANGUAGE BAR --}}
-                <div class="flex items-center justify-center gap-5 mb-10">
-
-                    <div class="w-72">
-
-                        <label class="block mb-2 font-semibold text-gray-700">
-
-                            Dari
-
-                        </label>
-
-                        <select
-                            id="direction"
-                            name="direction"
-                            class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-lg focus:ring-2 focus:ring-indigo-500">
-
-                            <option
-                                value="id_to_komering"
-                                @selected(old('direction') == 'id_to_komering')>
-
-                                Indonesia → Komering
-
-                            </option>
-
-                            <option
-                                value="komering_to_id"
-                                @selected(old('direction') == 'komering_to_id')>
-
-                                Komering → Indonesia
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    {{-- SWAP BUTTON --}}
-                    <div class="pt-8">
-
-                        <button
-                            type="button"
-                            onclick="swapDirection()"
-                            class="bg-indigo-100 hover:bg-indigo-200 transition rounded-2xl w-16 h-16 text-2xl text-indigo-700 font-bold shadow">
-
-                            ↔
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-                {{-- TRANSLATION AREA --}}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                    {{-- INPUT --}}
-                    <div>
-
-                        <h2 class="text-xl font-semibold mb-4 text-gray-800">
-
-                            Input Text
-
-                        </h2>
-
-                        <div class="relative">
-                            <textarea
-                                id="inputText"
-                                name="text"
-                                rows="14"
-                                class="w-full bg-gray-50 border border-gray-200 rounded-3xl p-6 text-lg focus:ring-2 focus:ring-indigo-500 resize-none"
-                                placeholder="Tulis kalimat di sini...">{{ old('text') }}</textarea>
-                            <button
-                                type="button"
-                                onclick="clearInput()"
-                                class="absolute bottom-5 right-5 bg-white border border-gray-200 hover:bg-gray-100 transition px-4 py-2 rounded-xl text-sm shadow">
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- OUTPUT --}}
-                    <div>
-
-                        <h2 class="text-xl font-semibold mb-4 text-gray-800">
-
-                            Translation Result
-
-                        </h2>
-
-                        <div class="relative bg-gray-50 border border-gray-200 rounded-3xl p-6 min-h-[360px]">
-                            @isset($result)
-                              <button
-                                    type="button"
-                                    onclick="copyResult()"
-                                    class="absolute top-5 right-5 bg-white border border-gray-200 hover:bg-gray-100 transition px-4 py-2 rounded-xl text-sm shadow">
-
-                                    Copy
-                                </button>
-                                <p
-                                    id="translationResult"
-                                    class="text-xl text-gray-900 leading-relaxed">
-                                    {{ $result }}
-                                </p>
-                            @else
-                                <div class="h-full flex items-center justify-center text-gray-400 text-lg text-center">
-                                    Hasil translation akan muncul di sini
-                                </div>
-                            @endisset
-                        </div>
-                    </div>
-                </div>
-
+                <textarea
+                    type="text"
+                    id="translateInput"
+                    rows="12"
+                    placeholder="Ketik teks..."
+                    class="w-full flex-1 p-6 text-xl resize-none border-none focus:ring-0"></textarea>
+                <!-- <div
+                    id="autocompleteResults"
+                    class="bg-white border border-gray-200 rounded-2xl shadow-lg mt-2 hidden"
+                ></div> -->
                 {{-- BUTTON --}}
-                <div class="text-center mt-10">
+                <div class="p-4 border-t border-gray-100">
 
-                    <button
-                        type="submit"
-                        class="bg-indigo-600 hover:bg-indigo-700 transition text-white px-12 py-5 rounded-2xl text-xl font-semibold shadow-lg">
+                    <!-- <button
+                        id="translate_button"
+                        type="button"
+                        class="bg-indigo-600 hover:bg-indigo-700 transition text-white px-6 py-3 rounded-2xl font-semibold">
 
-                        Translate Sekarang
+                        Translate
 
-                    </button>
+                    </button> -->
 
                 </div>
 
             </div>
 
-        </form>
+            {{-- OUTPUT --}}
+            <div
+                id="autocompleteResults"
+                class="p-6 text-xl text-gray-800 min-h-[320px] overflow-auto">
+
+                <div class="text-gray-400">
+
+                    Hasil translation...
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
-{{-- SWAP SCRIPT --}}
-<script>
-
-function swapDirection() {
-
-    const direction =
-        document.getElementById('direction');
-
-    if (
-        direction.value === 'id_to_komering'
-    ) {
-
-        direction.value =
-            'komering_to_id';
-
-    } else {
-
-        direction.value =
-            'id_to_komering';
-    }
-}
-
-</script>
-
-<div
-    id="copyNotification"
-    class="fixed bottom-6 right-6 bg-black text-white px-5 py-3 rounded-2xl shadow-xl hidden z-50">
-
-    Hasil translation berhasil disalin
-
 </div>
 
 <script>
 
-function swapDirection() {
+// const sourceText =
+//     document.getElementById('source_text');
 
-    const direction =
-        document.getElementById('direction');
+// const resultBox =
+//     document.getElementById('translation_result');
 
-    if (
-        direction.value === 'id_to_komering'
-    ) {
+// const direction =
+//     document.getElementById('translation_direction');
 
-        direction.value =
-            'komering_to_id';
+// const translateButton =
+//     document.getElementById('translate_button');
 
-    } else {
+// const swapButton =
+//     document.getElementById('swap_language');
 
-        direction.value =
-            'id_to_komering';
-    }
-}
+// async function translateText()
+// {
+//     const text = sourceText.value;
 
-function clearInput() {
+//     if(text.trim() === '')
+//     {
+//         resultBox.innerHTML = `
+//             <div class="text-gray-400">
+//                 Hasil translation akan muncul di sini...
+//             </div>
+//         `;
 
-    document.getElementById(
-        'inputText'
-    ).value = '';
-}
+//         return;
+//     }
 
-function copyResult() {
+//     resultBox.innerHTML = `
+//         <div class="text-indigo-500">
+//             Translating...
+//         </div>
+//     `;
 
-    const text =
-        document.getElementById(
-            'translationResult'
-        ).innerText;
+//     try {
 
-    navigator.clipboard.writeText(text);
+//         const response = await fetch(
+//             '/translate/live',
+//             {
 
-    const notif =
-        document.getElementById(
-            'copyNotification'
+//                 method: 'POST',
+
+//                 headers: {
+
+//                     'Content-Type':
+//                         'application/json',
+
+//                     'X-CSRF-TOKEN':
+//                         '{{ csrf_token() }}',
+
+//                     'Accept':
+//                         'application/json'
+//                 },
+
+//                 body: JSON.stringify({
+
+//                     text: text,
+
+//                     direction: direction.value
+
+//                 })
+
+//             }
+//         );
+
+//         const data =
+//             await response.json();
+
+//         resultBox.innerHTML = `
+
+//             <div class="text-gray-800 leading-relaxed text-lg">
+
+//                 ${data.translation}
+
+//             </div>
+
+//         `;
+
+//     } catch(error) {
+
+//         resultBox.innerHTML = `
+
+//             <div class="text-red-500">
+
+//                 Translation failed
+
+//             </div>
+
+//         `;
+
+//         console.error(error);
+//     }
+// }
+
+// translateButton.addEventListener(
+//     'click',
+//     translateText
+// );
+
+// sourceText.addEventListener(
+//     'keyup',
+//     () => {
+
+//         clearTimeout(window.translateTimeout);
+
+//         window.translateTimeout =
+//             setTimeout(() => {
+
+//                 translateText();
+
+//             }, 500);
+//     }
+// );
+
+// swapButton.addEventListener(
+//     'click',
+//     async () => {
+
+//         const currentInput =
+//             sourceText.value;
+
+//         const currentOutput =
+//             resultBox.innerText.trim();
+
+//         if(
+//             direction.value ===
+//             'id_to_kom'
+//         ) {
+
+//             direction.value =
+//                 'kom_to_id';
+
+//         } else {
+
+//             direction.value =
+//                 'id_to_kom';
+//         }
+
+//         if(
+//             currentOutput &&
+//             currentOutput !==
+//             'Hasil translation...'
+//         ) {
+
+//             sourceText.value =
+//                 currentOutput;
+//         }
+
+//         await translateText();
+//     }
+// );
+
+const input = document.getElementById(
+    'translateInput'
+);
+
+const resultsBox = document.getElementById(
+    'autocompleteResults'
+);
+
+let debounce;
+
+input.addEventListener(
+    'input',
+    function()
+{
+
+    clearTimeout(debounce);
+
+    debounce = setTimeout(
+        async () =>
+    {
+
+        const query = input.value;
+
+        if(query.length < 1){
+
+            resultsBox.classList.add(
+                'hidden'
+            );
+
+            return;
+        }
+
+        const response = await fetch(
+
+            `/translate/autocomplete?q=${query}`
+
         );
 
-    notif.classList.remove('hidden');
+        const data = await response.json();
 
-    setTimeout(() => {
+        resultsBox.innerHTML = '';
 
-        notif.classList.add('hidden');
+        if(data.length === 0){
 
-    }, 2000);
-}
+            resultsBox.classList.add(
+                'hidden'
+            );
 
+            return;
+        }
+
+        data.forEach(item => {
+
+            resultsBox.innerHTML += `
+
+                <div
+                    class="p-4 hover:bg-gray-50 cursor-pointer border-b"
+                >
+
+                    <div class="font-semibold">
+                       ${item.lemma.replace(
+
+                            new RegExp(query, 'gi'),
+
+                            match => `<strong>${match}</strong>`
+                        )}
+                    </div>
+
+                    <div class="text-sm text-gray-500">
+                        ${item.meaning}
+                    </div>
+
+                </div>
+            `;
+        });
+
+        resultsBox.classList.remove(
+            'hidden'
+        );
+
+    }, 250);
+});
 </script>
 
 </x-app-layout>

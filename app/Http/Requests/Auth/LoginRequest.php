@@ -49,6 +49,16 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
+        if (auth()->user()->status !== 'active') {
+
+    Auth::logout();
+
+    throw ValidationException::withMessages([
+
+        'email' => 'Akun Anda masih menunggu persetujuan admin.'
+
+    ]);
+}
 
         RateLimiter::clear($this->throttleKey());
     }

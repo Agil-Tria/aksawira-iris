@@ -2,32 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dictionary;
+use App\Models\DictionaryEntry;
 use App\Models\DictionaryValidation;
 use Illuminate\Http\Request;
 
 class DictionaryValidationController extends Controller
 {
-     public function index()
-    {
-        $words = Dictionary::where(
-            'status',
-            'pending'
-        )->latest()->get();
+public function index()
+{
+    $words = DictionaryEntry::where(
 
-        return view(
-            'dictionary-validation.index',
-            compact('words')
-        );
-    }
+        'status',
+
+        'pending'
+
+    )
+
+    ->latest()
+
+    ->get();
+
+    return view(
+
+        'dictionary-validation.index',
+
+        compact('words')
+    );
+}
 
     public function process(
         Request $request,
-        Dictionary $dictionary
+        DictionaryEntry $dictionary
     ) {
 
         $request->validate([
+
             'action' => 'required',
+
+            'notes' =>
+
+                $request->action === 'reject'
+
+                ? 'required|string|max:500'
+
+                : 'nullable'
         ]);
 
         DictionaryValidation::create([
@@ -46,8 +64,20 @@ class DictionaryValidationController extends Controller
 
         if ($request->action === 'reject') {
 
+            $request->validate([
+
+                'notes' =>
+
+                    'required|string|max:500'
+            ]);
+
             $dictionary->update([
+
                 'status' => 'rejected',
+
+                'reject_reason' =>
+
+                    $request->notes,
             ]);
         }
 

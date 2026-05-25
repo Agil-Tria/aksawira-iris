@@ -15,8 +15,20 @@
 </head>
 
 <body class="bg-gray-50 text-gray-900">
-
+  
     @include('layouts.navigation')
+                <!-- <a href="{{ route('login') }}"
+                class="block px-5 py-4 rounded-2xl hover:bg-gray-100">
+
+                Login
+
+             </a>
+             <a href="{{ route('register') }}"
+                class="block px-5 py-4 rounded-2xl hover:bg-gray-100">
+
+                Register
+
+            </a> -->
 
     <section class="max-w-7xl mx-auto px-6 py-24">
 

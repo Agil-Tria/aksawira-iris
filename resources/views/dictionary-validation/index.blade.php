@@ -5,6 +5,23 @@
     <h1 class="text-3xl font-bold mb-6">
         Dictionary Validation
     </h1>
+    @if($errors->any())
+
+    <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded-2xl mb-6">
+
+        <ul>
+
+            @foreach($errors->all() as $error)
+
+                <li>{{ $error }}</li>
+
+            @endforeach
+
+        </ul>
+
+    </div>
+
+@endif
 
     @foreach($words as $word)
 
@@ -14,7 +31,7 @@
 
             <strong>Indonesia:</strong>
 
-            {{ $word->word_source }}
+            {{ $word->meaning }}
 
         </div>
 
@@ -22,7 +39,7 @@
 
             <strong>Komering:</strong>
 
-            {{ $word->word_target }}
+            {{ $word->lemma }}
 
         </div>
 
@@ -30,49 +47,45 @@
 
             <strong>Contoh:</strong>
 
-            {{ $word->example_sentence }}
+            
 
         </div>
 
-        <form
-            method="POST"
-            action="{{ route(
-                'dictionary.validation.process',
-                $word->id
-            ) }}">
+            <form
+                method="POST"
+                action="{{ route('dictionary.validation.process', $word->id) }}">
 
-            @csrf
+                @csrf
 
-            <textarea
-                name="notes"
-                class="w-full border rounded p-3 mb-4"
-                placeholder="Validator notes"></textarea>
+                <textarea
+                    name="notes"
+                    placeholder="Validator notes"
+                    class="w-full border rounded-xl p-4 mb-4"
+                ></textarea>
 
-            <div class="flex gap-4">
+                <div class="flex gap-3">
 
-                <button
-                    type="submit"
-                    name="action"
-                    value="approve"
-                    class="bg-green-600 text-white px-4 py-2 rounded">
+                    <button
+                        type="submit"
+                        name="action"
+                        value="approve"
+                        class="bg-green-600 text-white px-5 py-2 rounded-xl"
+                    >
+                        Approve
+                    </button>
 
-                    Approve
+                    <button
+                        type="submit"
+                        name="action"
+                        value="reject"
+                        class="bg-red-600 text-white px-5 py-2 rounded-xl"
+                    >
+                        Reject
+                    </button>
 
-                </button>
+                </div>
 
-                <button
-                    type="submit"
-                    name="action"
-                    value="reject"
-                    class="bg-red-600 text-white px-4 py-2 rounded">
-
-                    Reject
-
-                </button>
-
-            </div>
-
-        </form>
+            </form>
 
     </div>
 

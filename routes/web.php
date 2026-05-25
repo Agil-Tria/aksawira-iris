@@ -14,6 +14,10 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\TranslationHistoryController;
 use App\Http\Controllers\Admin\AdminCorpusController;
 use App\Http\Controllers\Admin\AdminDictionaryController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\DictionaryImportController;
+use App\Http\Controllers\DictionaryPdfImportController;
+use App\Http\Controllers\DictionaryEntryImportController;
 use App\Models\Sentence;
 use App\Models\Dictionary;
 
@@ -35,6 +39,68 @@ Route::get('/', function () {
     ));
 });
 
+Route::delete(
+    '/dictionary/delete-all',
+    [\App\Http\Controllers\DictionaryController::class, 'deleteAll']
+)->middleware([
+    'auth',
+    'role:admin|validator'
+])->name('dictionary.deleteAll');
+
+Route::middleware(['auth'])
+    ->group(function () {
+
+        Route::post(
+            '/dictionary/import',
+            [DictionaryImportController::class, 'import']
+        )->name('dictionary.import');
+
+    });
+
+    Route::middleware([
+    'auth',
+    'role:admin|validator'
+])->group(function () {
+
+    // Route::post(
+    //     '/dictionary/import/xlsx',
+    //     [DictionaryEntryImportController::class, 'import']
+    // )->name('dictionary.import.xlsx');
+
+});
+
+Route::post(
+
+    '/dictionary/import',
+
+    [DictionaryImportController::class, 'import']
+
+)->middleware('auth');
+
+    Route::post(
+    '/dictionary/import/pdf',
+    [DictionaryPdfImportController::class, 'import']
+        )->middleware('auth')
+        ->name('dictionary.import.pdf');
+
+
+Route::middleware([
+    'auth',
+    'role:admin'
+])->prefix('admin')->group(function () {
+
+    Route::get(
+        '/users',
+        [\App\Http\Controllers\Admin\AdminUserController::class, 'index']
+    )->name('admin.users.index');
+
+    Route::patch(
+        '/users/{user}/approve',
+        [\App\Http\Controllers\Admin\AdminUserController::class, 'approve']
+    )->name('admin.users.approve');
+
+});
+
 
 Route::get('/corpus', [
     PublicCorpusController::class,
@@ -50,6 +116,29 @@ Route::post('/translate', [
     TranslateController::class,
     'translate'
 ])->name('translate.process');
+Route::post(
+    '/translate/live',
+    [TranslateController::class, 'liveTranslate']
+)->name('translate.live');
+
+Route::get(
+
+    '/translate/autocomplete',
+
+    [TranslateController::class, 'autocomplete']
+
+);
+
+Route::middleware(['role:admin'])
+    ->group(function () {
+
+        Route::patch(
+            '/admin/users/{user}/approve',
+            [AdminUserController::class, 'approve']
+        )->name('admin.users.approve');
+
+    });
+
 
 Route::middleware(['auth', 'role:admin'])
     ->group(function () {
@@ -75,9 +164,16 @@ Route::middleware(['auth', 'role:admin'])
         )->name('admin.corpus.destroy');
 
         Route::delete(
-            '/admin/dictionary/{dictionary}',
-            [AdminDictionaryController::class, 'destroy']
-        )->name('admin.dictionary.destroy');
+
+    '/admin/dictionary/{word}',
+
+    [DictionaryController::class, 'destroy']
+
+    
+
+)->name(
+    'admin.dictionary.destroy'
+);
 
     });
 
@@ -147,7 +243,16 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::resource('sentences', SentenceController::class);
+    Route::middleware([
+    // 'role:admin|validator'
+])->group(function () {
+
+    Route::resource(
+        'sentences',
+        \App\Http\Controllers\SentenceController::class
+    );
+
+});
 
 });
 

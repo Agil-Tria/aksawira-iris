@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sentence extends Model
 {
      protected $fillable = [
+        'user_id',
         'source_text',
         'target_text',
         'source_lang',

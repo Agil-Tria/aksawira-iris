@@ -17,7 +17,14 @@ class DatabaseSeeder extends Seeder
         $admin = User::first();
 
         if ($admin) {
+
             $admin->assignRole('admin');
+
+            $admin->update([
+
+                'status' => 'active'
+
+            ]);
         }
     }
 

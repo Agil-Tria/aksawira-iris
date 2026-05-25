@@ -2,104 +2,216 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TranslationHistory;
-use App\Models\Dictionary;
 use Illuminate\Http\Request;
+
+use App\Models\DictionaryEntry;
 
 class TranslateController extends Controller
 {
-     public function index()
+    public function index()
     {
         return view('translate.index');
     }
 
-    public function translate(Request $request)
+    public function liveTranslate(
+        Request $request
+    )
     {
-        $request->validate([
-            'text' => 'required',
-            'direction' => 'required',
-        ]);
-
-        $input = strtolower($request->text);
-
-        $words = explode(' ', $input);
-
-        $translatedWords = [];
-
-        foreach ($words as $word) {
-
-            if ($request->direction === 'id_to_komering') {
-
-                $dictionary = Dictionary::where(
-                    'status',
-                    'approved'
-                )
-
-                ->where(
-                    'word_source',
-                    $word
-                )
-
-                ->first();
-
-                if ($dictionary) {
-
-                    $translatedWords[] =
-                        $dictionary->word_target;
-
-                } else {
-
-                    $translatedWords[] = $word;
-                }
-            }
-
-            if ($request->direction === 'komering_to_id') {
-
-                $dictionary = Dictionary::where(
-                    'status',
-                    'approved'
-                )
-
-                ->where(
-                    'word_target',
-                    $word
-                )
-
-                ->first();
-
-                if ($dictionary) {
-
-                    $translatedWords[] =
-                        $dictionary->word_source;
-
-                } else {
-
-                    $translatedWords[] = $word;
-                }
-            }
-        }
-
-        $result = implode(
-            ' ',
-            $translatedWords
+        $text = strtolower(
+            trim(
+                $request->text
+            )
         );
 
-        TranslationHistory::create([
+        $direction =
+            $request->direction;
 
-            'user_id' => auth()->id(),
+        // =====================================
+        // ID -> KOM
+        // =====================================
 
-            'input_text' => $request->text,
+        if(
+            $direction === 'id_to_kom'
+        ) {
 
-            'translated_text' => $result,
+$entry = DictionaryEntry::query()
 
-            'direction' => $request->direction,
+    ->where(
 
+        'lemma',
+
+        'ILIKE',
+
+        $word
+    )
+
+    ->orWhere(
+
+        'meaning',
+
+        'ILIKE',
+
+        $word
+    )
+
+    ->orderByRaw(
+
+        "
+        CASE
+
+            WHEN lemma ILIKE ? THEN 1
+
+            WHEN meaning ILIKE ? THEN 2
+
+            ELSE 3
+
+        END
+        ",
+
+        [
+            $word,
+            $word
+        ]
+    )
+
+    ->first();
+
+            return response()->json([
+
+                'translation' =>
+                    $entry
+                        ? $entry->lemma
+                        : 'Terjemahan tidak ditemukan'
+            ]);
+        }
+
+        // =====================================
+        // KOM -> ID
+        // =====================================
+
+       $entry = DictionaryEntry::query()
+
+    ->where(
+
+        'lemma',
+
+        'ILIKE',
+
+        $word
+    )
+
+    ->orWhere(
+
+        'meaning',
+
+        'ILIKE',
+
+        $word
+    )
+
+    ->orderByRaw(
+
+        "
+        CASE
+
+            WHEN lemma ILIKE ? THEN 1
+
+            WHEN meaning ILIKE ? THEN 2
+
+            ELSE 3
+
+        END
+        ",
+
+        [
+            $word,
+            $word
+        ]
+    )
+
+    ->first();
+        return response()->json([
+
+            'translation' =>
+                $entry
+                    ? $entry->meaning
+                    : 'Terjemahan tidak ditemukan'
         ]);
-        return view(
-            'translate.index',
-            compact(
-                'result'
+    }
+
+        public function autocomplete(
+        Request $request
+    )
+    {
+        $query = strtolower(
+            trim(
+                $request->q
             )
+        );
+
+        if(strlen($query) < 1){
+
+            return response()->json([]);
+        }
+
+        $results = DictionaryEntry::query()
+
+            ->select([
+                'lemma',
+                'meaning'
+            ])
+
+            ->where(function($q) use ($query){
+
+                $q->where(
+                    'lemma',
+                    'ILIKE',
+                    '%' . $query . '%'
+                )
+
+                ->orWhere(
+                    'meaning',
+                    'ILIKE',
+                    '%' . $query . '%'
+                );
+            })
+
+            // =====================================
+            // SMART RANKING
+            // =====================================
+
+            ->orderByRaw(
+
+                "
+                CASE
+
+                    WHEN lemma ILIKE ? THEN 1
+
+                    WHEN lemma ILIKE ? THEN 2
+
+                    WHEN meaning ILIKE ? THEN 3
+
+                    ELSE 4
+
+                END
+                ",
+
+                [
+
+                    $query,
+
+                    $query . '%',
+
+                    $query . '%'
+                ]
+            )
+
+            ->limit(8)
+
+            ->get();
+
+        return response()->json(
+            $results
         );
     }
 }

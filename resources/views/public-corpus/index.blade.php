@@ -104,11 +104,31 @@
 
                         @endrole
 
-                        <div class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-2xl text-sm font-medium">
+@if($sentence->status === 'approved')
 
-                            Approved Corpus
+    <div class="bg-green-100 text-green-700 px-4 py-2 rounded-2xl text-sm font-medium">
 
-                        </div>
+        Approved
+
+    </div>
+
+@elseif($sentence->status === 'pending')
+
+    <div class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-2xl text-sm font-medium">
+
+        Pending
+
+    </div>
+
+@else
+
+    <div class="bg-red-100 text-red-700 px-4 py-2 rounded-2xl text-sm font-medium">
+
+        Rejected
+
+    </div>
+
+@endif
 
                         <div class="text-sm text-gray-500">
 
